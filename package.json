@@ -1,0 +1,14 @@
+{
+  "name": "today-economy",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "test": "node test/index.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "js-yaml": "^4.1.1",
+    "nodemailer": "^6.9.16"
+  }
+}

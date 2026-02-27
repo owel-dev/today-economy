@@ -1,0 +1,14 @@
+newspapers:
+  - name: 신문사A
+    type: image
+    url: "https://example.com/news/{year}{month}{day}/page.jpg"
+  - name: 신문사B
+    type: text
+    url: "https://example.com/news/{year}/{month}/{day}/article"
+
+email:
+  recipients:
+    - name: 홍길동
+      address: example1@gmail.com
+    - name: 김철수
+      address: example2@gmail.com
