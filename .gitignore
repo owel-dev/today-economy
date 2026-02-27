@@ -1,6 +1,17 @@
+# Dependencies
 node_modules
 
+# Environment & Config
 .env
 config.yaml
 
+# IDE
+.vscode
+.idea
+*.iml
+
+# macOS
+.DS_Store
+
+# AI
 .claude
