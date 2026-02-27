@@ -11,7 +11,7 @@ const config = yaml.load(readFileSync('./config.yaml', 'utf8'));
 async function main() {
   const mode = process.env.MODE;
   const title = createTitle();
-  const content = await createContent();
+  const content = await createContent(config.newspapers);
 
   if (mode === 'terminal') {
     console.log(`\n${title}\n\n${content}\n`);

@@ -1,12 +1,8 @@
-import { readFileSync } from 'fs';
-import yaml from 'js-yaml';
 import { fetchText, getBase64Image, ocrImage } from './scraper.js';
 import { generateLlmCompletion } from './llm.js';
 import { PROMPTS } from './prompts.js';
 import { getKoreanDate } from './utils.js';
 import { DAY } from './constants.js';
-
-const config = yaml.load(readFileSync('./config.yaml', 'utf8'));
 
 export function createTitle() {
   const { year, month, day } = getKoreanDate({ padZero: false });
@@ -14,12 +10,10 @@ export function createTitle() {
   return `${year}년 ${month}월 ${day}일 오늘의 경제뉴스`;
 }
 
-export async function createContent() {
+export async function createContent(newspapers) {
   let content = "";
 
   if (new Date().getDay() === DAY.SUN) return;
-
-  const newspapers = config.newspapers;
   const total = newspapers.length + 4;
 
   for (let i = 0; i < newspapers.length; i++) {
