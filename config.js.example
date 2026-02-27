@@ -1,0 +1,43 @@
+import 'dotenv/config';
+
+// --- 수집 대상 신문사 ---
+export const newspapers = [
+  {
+    name: '신문사A',
+    type: 'image',
+    url: 'https://example.com/news/{year}{month}{day}/page.jpg',
+  },
+  {
+    name: '신문사B',
+    type: 'text',
+    url: 'https://example.com/news/{year}/{month}/{day}/article',
+  },
+];
+
+// --- 이메일 수신자 ---
+export const emailRecipients = [
+  { name: '홍길동', address: 'example1@gmail.com' },
+  { name: '김철수', address: 'example2@gmail.com' },
+];
+
+// --- 실행 모드 (terminal | wordpress | email | slack) ---
+export const mode = process.env.MODE;
+
+// --- Google Cloud (OCR) ---
+export const gcpApiKey = process.env.GCP_API_KEY;
+
+// --- OpenAI ---
+export const gptApiKey = process.env.GPT_API_KEY;
+
+// --- Slack ---
+export const slackBotToken = process.env.SLACK_BOT_TOKEN;
+export const slackChannel = process.env.SLACK_CHANNEL;
+
+// --- Gmail ---
+export const gmailUser = process.env.GMAIL_USER;
+export const gmailAppPassword = process.env.GMAIL_APP_PASSWORD;
+
+// --- WordPress ---
+export const wpUrl = process.env.WP_URL;
+export const wpUsername = process.env.WP_USERNAME;
+export const wpAppPassword = process.env.WP_APP_PASSWORD;

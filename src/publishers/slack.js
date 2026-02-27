@@ -1,3 +1,5 @@
+import { slackBotToken } from '../../config.js';
+
 async function getChannelIdByName(channelName, token) {
   const apiUrl = 'https://slack.com/api/conversations.list?limit=1000&types=public_channel,private_channel';
 
@@ -18,7 +20,6 @@ async function getChannelIdByName(channelName, token) {
 }
 
 export async function sendSlackMessage(channelName, text, threadTs = null) {
-  const slackBotToken = process.env.SLACK_BOT_TOKEN;
   const channelId = await getChannelIdByName(channelName, slackBotToken);
 
   var payload = {

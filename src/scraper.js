@@ -1,3 +1,5 @@
+import { gcpApiKey } from '../config.js';
+
 export async function fetchText(url) {
   const response = await fetch(url);
   return response.text();
@@ -12,7 +14,7 @@ export async function getBase64Image(imageUrl) {
 }
 
 export async function ocrImage(base64Image) {
-  const apiKey = process.env.GCP_API_KEY;
+  const apiKey = gcpApiKey;
   const visionApiUrl = 'https://vision.googleapis.com/v1/images:annotate?key=' + apiKey;
 
   const requestBody = {

@@ -1,17 +1,17 @@
 import nodemailer from 'nodemailer';
-
+import { gmailUser, gmailAppPassword } from '../../config.js';
 
 export async function sendEmail({ name, address }, subject, content) {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: process.env.GMAIL_USER,
-      pass: process.env.GMAIL_APP_PASSWORD
+      user: gmailUser,
+      pass: gmailAppPassword
     }
   });
 
   await transporter.sendMail({
-    from: process.env.GMAIL_USER,
+    from: gmailUser,
     to: `${name} <${address}>`,
     subject: subject,
     html: `<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body>${content}</body></html>`
