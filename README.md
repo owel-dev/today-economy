@@ -56,25 +56,31 @@ cp .env.example .env
 
 ### 2. 신문사 및 수신자 설정
 
-`config.yaml.example`을 복사하여 `config.yaml` 파일을 만듭니다.
+`config.js.example`을 복사하여 `config.js` 파일을 만듭니다.
 
 ```bash
-cp config.yaml.example config.yaml
+cp config.js.example config.js
 ```
 
-```yaml
-newspapers:
-  - name: 신문사A
-    type: image   # 이미지 기사 → Google Vision OCR로 텍스트 추출
-    url: "https://example.com/news/{year}{month}{day}/page.jpg"
-  - name: 신문사B
-    type: text    # 텍스트 기사 → 직접 크롤링
-    url: "https://example.com/news/{year}/{month}/{day}/article"
+```js
+// --- 수집 대상 신문사 ---
+export const newspapers = [
+  {
+    name: '신문사A',
+    type: 'image',  // 이미지 기사 → Google Vision OCR로 텍스트 추출
+    url: 'https://example.com/news/{year}{month}{day}/page.jpg',
+  },
+  {
+    name: '신문사B',
+    type: 'text',   // 텍스트 기사 → 직접 크롤링
+    url: 'https://example.com/news/{year}/{month}/{day}/article',
+  },
+];
 
-email:
-  recipients:
-    - name: 홍길동
-      address: example@gmail.com
+// --- 이메일 수신자 ---
+export const emailRecipients = [
+  { name: '홍길동', address: 'example@gmail.com' },
+];
 ```
 
 - URL의 `{year}`, `{month}`, `{day}`는 실행 시점의 날짜로 자동 치환됩니다.
@@ -101,7 +107,7 @@ MODE=slack npm start
 
 ```
 ├── index.js                  # 진입점
-├── config.yaml               # 신문사·수신자 설정
+├── config.js                 # 신문사·수신자 설정
 ├── .env                      # 환경 변수
 ├── prompts/                  # GPT 프롬프트 파일
 │   ├── remove-unnecessary.md
