@@ -8,6 +8,6 @@
   },
   "dependencies": {
     "dotenv": "^16.4.7",
-    "nodemailer": "^6.9.16"
+    "nodemailer": "^7.0.11"
   }
 }
