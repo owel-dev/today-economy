@@ -1,5 +1,8 @@
 name: Daily Economy Email Report
 
+permissions:
+  contents: read
+
 on:
   schedule:
     - cron: '0 2 * * *'  # 매일 오전 11시 KST (UTC+9 기준 02:00 UTC)
