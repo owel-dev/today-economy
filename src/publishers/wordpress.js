@@ -1,10 +1,6 @@
-import { wpUrl, wpUsername, wpAppPassword } from '../../config.js';
-
 export async function createWpPost(title, content) {
-  const apiUrl = `${wpUrl}/wp-json/wp/v2/posts`;
-  const username = wpUsername;
-  const password = wpAppPassword;
-  const credentials = Buffer.from(`${username}:${password}`).toString('base64');
+  const apiUrl = `${process.env.WP_URL}/wp-json/wp/v2/posts`;
+  const credentials = Buffer.from(`${process.env.WP_USERNAME}:${process.env.WP_APP_PASSWORD}`).toString('base64');
 
   const response = await fetch(apiUrl, {
     method: 'POST',

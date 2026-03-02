@@ -1,4 +1,4 @@
-import { mode, newspapers, emailRecipients, slackChannel } from './config.js';
+import { newspapers, emailRecipients } from './config.js';
 import { createWpPost } from './src/publishers/wordpress.js';
 import { sendMailList } from './src/publishers/email.js';
 import { sendSlackMessage } from './src/publishers/slack.js';
@@ -8,6 +8,8 @@ async function main() {
   const title = createTitle();
   const content = await createContent(newspapers);
 
+  const mode = process.env.MODE;
+
   if (mode === 'terminal') {
     console.log(`\n${title}\n\n${content}\n`);
   } else if (mode === 'wordpress') {
@@ -15,7 +17,7 @@ async function main() {
   } else if (mode === 'email') {
     await sendMailList(emailRecipients, title, content);
   } else if (mode === 'slack') {
-    await sendSlackMessage(slackChannel, `${title}\n\n${content}`);
+    await sendSlackMessage(process.env.SLACK_CHANNEL, `${title}\n\n${content}`);
   } else {
     console.error(`지원하지 않는 MODE입니다: "${mode}". terminal, wordpress, email, slack 중 하나를 설정해주세요.`);
     process.exit(1);

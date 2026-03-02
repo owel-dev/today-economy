@@ -1,10 +1,8 @@
-import { gptApiKey } from '../config.js';
-
 export async function generateLlmCompletion(systemPrompt, userContent, options = {}) {
-  const apiKey = gptApiKey;
-  
+  const apiKey = process.env.GPT_API_KEY;
+
   if (!apiKey) {
-    throw new Error('config.js에 GPT_API_KEY가 설정되지 않았습니다');
+    throw new Error('GPT_API_KEY가 설정되지 않았습니다');
   }
 
   const {
