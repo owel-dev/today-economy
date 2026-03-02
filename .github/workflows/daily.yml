@@ -1,0 +1,41 @@
+name: Daily Economy Email Report
+
+on:
+  schedule:
+    - cron: '0 2 * * *'  # 매일 오전 11시 KST (UTC+9 기준 02:00 UTC)
+  workflow_dispatch:      # 수동 실행 가능
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24.12.0'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Fetch config.js from Gist
+        env:
+          GIST_TOKEN: ${{ secrets.GIST_TOKEN }}
+          GIST_ID: ${{ secrets.GIST_ID }}
+        run: |
+          curl -fsSL \
+            -H "Authorization: token $GIST_TOKEN" \
+            "https://api.github.com/gists/$GIST_ID" \
+            | jq -r '.files["config.js"].content' > config.js
+
+      - name: Run index.js
+        env:
+          MODE: email
+          GCP_API_KEY: ${{ secrets.GCP_API_KEY }}
+          GPT_API_KEY: ${{ secrets.GPT_API_KEY }}
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+        run: node index.js
