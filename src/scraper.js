@@ -1,8 +1,25 @@
+import * as cheerio from 'cheerio';
 import { gcpApiKey } from '../config.js';
 
 export async function fetchText(url) {
   const response = await fetch(url);
   return response.text();
+}
+
+export async function scrapeRssFirstContent(url) {
+  const xml = await fetchText(url);
+  const $ = cheerio.load(xml, { xmlMode: true });
+  const htmlContent = $('item').first().find('content\\:encoded').text();
+  const $article = cheerio.load(htmlContent);
+  $article('script, style, figure, img, nav, header, footer').remove();
+  return $article('body').text().replace(/\s+/g, ' ').trim();
+}
+
+export async function scrapeBodyText(url) {
+  const html = await fetchText(url);
+  const $ = cheerio.load(html);
+  $('script, style, nav, header, footer').remove();
+  return $('body').text().replace(/\s+/g, ' ').trim();
 }
 
 export async function getBase64Image(imageUrl) {

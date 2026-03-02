@@ -4,13 +4,18 @@ import 'dotenv/config';
 export const newspapers = [
   {
     name: '신문사A',
-    type: 'image',
+    type: 'image',                                           // OCR로 텍스트 추출
     url: 'https://example.com/news/{year}{month}{day}/page.jpg',
   },
   {
     name: '신문사B',
-    type: 'text',
+    type: 'text',                                            // HTML 본문 텍스트 추출
     url: 'https://example.com/news/{year}/{month}/{day}/article',
+  },
+  {
+    name: '신문사C',
+    type: 'rss',                                             // RSS 피드 최신 기사 추출
+    url: 'https://example.com/feed',
   },
 ];
 

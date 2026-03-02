@@ -1,4 +1,5 @@
-import { fetchText, getBase64Image, ocrImage } from './scraper.js';
+import fs from 'fs';
+import { getBase64Image, ocrImage, scrapeBodyText, scrapeRssFirstContent } from './scraper.js';
 import { generateLlmCompletion } from './llm.js';
 import { PROMPTS } from './prompts.js';
 import { getKoreanDate } from './utils.js';
@@ -18,6 +19,11 @@ export async function createContent(newspapers) {
   const total = newspapers.length + 4;
 
   for (let i = 0; i < newspapers.length; i++) {
+    if (!isWorkingDay(newspapers[i])) {
+      console.log(`[${i + 1}/${total}] ${newspapers[i].name} 기사 건너뜀`);
+      continue;
+    }
+    
     content += await getRowArticle(newspapers[i]);
     console.log(`[${i + 1}/${total}] ${newspapers[i].name} 기사 수집 완료`);
   }
@@ -43,6 +49,21 @@ export async function createContent(newspapers) {
   return content;
 }
 
+export function isWorkingDay(newspaper) {
+  const today = new Date();
+  const dayOfWeek = today.getDay();
+
+  if (newspaper.name === 'H' || newspaper.name === 'M') {
+    return dayOfWeek !== DAY.SUN;
+  }
+
+  if (newspaper.name === 'B') {
+    return dayOfWeek !== DAY.SUN && dayOfWeek !== DAY.SAT;
+  }
+
+  return true;
+}
+
 export async function getRowArticle({ type, url }) {
   const { year, month, day } = getKoreanDate();
   const resolvedUrl = url
@@ -54,9 +75,10 @@ export async function getRowArticle({ type, url }) {
     const imageBase64 = await getBase64Image(resolvedUrl);
     return ocrImage(imageBase64);
   } else if (type === 'text') {
-    return fetchText(resolvedUrl);
+    return scrapeBodyText(resolvedUrl);
+  } else if (type === 'rss') {
+    return scrapeRssFirstContent(resolvedUrl);
   } else {
     throw new Error(`지원하지 않는 뉴스 타입입니다: "${type}".`);
   }
-
 }

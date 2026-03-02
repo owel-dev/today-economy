@@ -67,25 +67,32 @@ cp config.js.example config.js
 export const newspapers = [
   {
     name: '신문사A',
-    type: 'image',  // 이미지 기사 → Google Vision OCR로 텍스트 추출
+    type: 'image',  // 이미지 URL → Google Cloud Vision OCR로 텍스트 추출
     url: 'https://example.com/news/{year}{month}{day}/page.jpg',
   },
   {
     name: '신문사B',
-    type: 'text',   // 텍스트 기사 → 직접 크롤링
+    type: 'text',   // HTML 페이지 → 본문 텍스트 직접 추출
     url: 'https://example.com/news/{year}/{month}/{day}/article',
+  },
+  {
+    name: '신문사C',
+    type: 'rss',    // RSS 피드 → 최신 기사 본문 추출
+    url: 'https://example.com/feed',
   },
 ];
 
 // --- 이메일 수신자 ---
 export const emailRecipients = [
   { name: '홍길동', address: 'example@gmail.com' },
+  { name: '김철수', address: 'example22@gmail.com' },
 ];
 ```
 
 - URL의 `{year}`, `{month}`, `{day}`는 실행 시점의 날짜로 자동 치환됩니다.
 - `type: image`: 이미지 URL에서 Google Cloud Vision OCR로 텍스트를 추출합니다.
-- `type: text`: URL에서 HTML 텍스트를 직접 가져옵니다.
+- `type: text`: URL에서 HTML 본문 텍스트를 직접 가져옵니다.
+- `type: rss`: RSS 피드에서 가장 최신 기사의 본문을 가져옵니다.
 
 ## 실행
 
