@@ -5,7 +5,7 @@ permissions:
 
 on:
   schedule:
-    - cron: '0 2 * * *'  # 매일 오전 11시 KST (UTC+9 기준 02:00 UTC)
+    - cron: '0 1 * * *'  # 매일 오전 10시 (KST)
   workflow_dispatch:      # 수동 실행 가능
 
 jobs:
