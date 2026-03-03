@@ -77,8 +77,9 @@ export const newspapers = [
   },
   {
     name: '신문사C',
-    type: 'rss',    // RSS 피드 → 최신 기사 본문 추출
-    url: 'https://example.com/feed',
+    type: 'text',   // selector로 기사 URL을 추출한 뒤 본문 텍스트 추출
+    url: 'https://example.com/news/{year}/{month}/{day}',
+    selector: '#today-news .news-list li:first-child a.href',
   },
 ];
 
@@ -91,8 +92,7 @@ export const emailRecipients = [
 
 - URL의 `{year}`, `{month}`, `{day}`는 실행 시점의 날짜로 자동 치환됩니다.
 - `type: image`: 이미지 URL에서 Google Cloud Vision OCR로 텍스트를 추출합니다.
-- `type: text`: URL에서 HTML 본문 텍스트를 직접 가져옵니다.
-- `type: rss`: RSS 피드에서 가장 최신 기사의 본문을 가져옵니다.
+- `type: text`: URL에서 HTML 본문 텍스트를 직접 가져옵니다. 기사 목록 페이지처럼 중간 페이지를 거쳐야 하는 경우 `selector`를 지정하면, 해당 요소의 href URL로 이동한 뒤 본문을 추출합니다.
 
 ## 실행
 

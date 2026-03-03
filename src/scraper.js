@@ -6,13 +6,12 @@ export async function fetchText(url) {
   return response.text();
 }
 
-export async function scrapeRssFirstContent(url) {
-  const xml = await fetchText(url);
-  const $ = cheerio.load(xml, { xmlMode: true });
-  const htmlContent = $('item').first().find('content\\:encoded').text();
-  const $article = cheerio.load(htmlContent);
-  $article('script, style, figure, img, nav, header, footer').remove();
-  return $article('body').text().replace(/\s+/g, ' ').trim();
+export async function scrapeSelectorUrl(url, selector) {
+  const html = await fetchText(url);
+  const $ = cheerio.load(html);
+  const href = $(selector).attr('href');
+  if (!href) throw new Error(`기사 URL을 찾을 수 없습니다 (selector: ${selector})`);
+  return href;
 }
 
 export async function scrapeBodyText(url) {
