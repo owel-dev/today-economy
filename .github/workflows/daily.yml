@@ -41,5 +41,4 @@ jobs:
           GPT_API_KEY: ${{ secrets.GPT_API_KEY }}
           GMAIL_USER: ${{ secrets.GMAIL_USER }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
-          NODE_OPTIONS: --openssl-legacy-provider
         run: node index.js
