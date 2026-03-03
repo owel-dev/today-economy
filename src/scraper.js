@@ -1,4 +1,5 @@
 import * as cheerio from 'cheerio';
+import https from 'node:https';
 
 export async function fetchText(url) {
   const response = await fetch(url);
@@ -22,11 +23,39 @@ export async function scrapeBodyText(url) {
 }
 
 export async function getBase64Image(imageUrl) {
-  const response = await fetch(imageUrl);
-  const arrayBuffer = await response.arrayBuffer();
-  const base64Image = Buffer.from(arrayBuffer).toString('base64');
+  try {
+    const response = await fetch(imageUrl);
 
-  return base64Image;
+    if (!response.ok) {
+      throw new Error(`이미지 다운로드 실패 (${response.status}): ${imageUrl}`);
+    }
+
+    const arrayBuffer = await response.arrayBuffer();
+    return Buffer.from(arrayBuffer).toString('base64');
+  } catch (error) {
+    if ((error?.cause?.code ?? error?.code) !== 'ERR_SSL_DH_KEY_TOO_SMALL') {
+      throw error;
+    }
+
+    const imageBuffer = await new Promise((resolve, reject) => {
+      https
+        .get(imageUrl, { ciphers: 'DEFAULT@SECLEVEL=1' }, (res) => {
+          if (!res.statusCode || res.statusCode < 200 || res.statusCode >= 300) {
+            res.resume();
+            reject(new Error(`이미지 다운로드 실패 (${res.statusCode}): ${imageUrl}`));
+            return;
+          }
+
+          const chunks = [];
+          res.on('data', (chunk) => chunks.push(chunk));
+          res.on('end', () => resolve(Buffer.concat(chunks)));
+          res.on('error', reject);
+        })
+        .on('error', reject);
+    });
+
+    return imageBuffer.toString('base64');
+  }
 }
 
 export async function ocrImage(base64Image) {
