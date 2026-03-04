@@ -18,7 +18,7 @@ export async function scrapeBodyText(url) {
   const html = await fetchText(url);
   const $ = cheerio.load(html);
   $('script, style, nav, header, footer').remove();
-  return $('body').text().replace(/\s+/g, ' ').trim();
+  return $('body').html();
 }
 
 export async function getBase64Image(imageUrl) {
