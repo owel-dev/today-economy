@@ -21,6 +21,7 @@
 ## 요구사항
 
 - Node.js 18+
+- TypeScript (devDependency로 포함)
 - OpenAI API Key (GPT)
 - Google Cloud Vision API Key (이미지 기사 OCR 사용 시)
 - 발행 채널에 따라: Gmail 앱 비밀번호 / Slack Bot Token / WordPress 앱 비밀번호
@@ -28,7 +29,7 @@
 ## 설치
 
 ```bash
-npm install
+pnpm install
 ```
 
 ## 설정
@@ -56,17 +57,15 @@ cp .env.example .env
 
 ### 2. 신문사 및 수신자 설정
 
-`config.js.example`을 복사하여 `config.js` 파일을 만듭니다.
+`config.js.example`을 참고하여 `config.ts` 파일을 만듭니다.
 
-```bash
-cp config.js.example config.js
-```
-
-```js
+```ts
+import 'dotenv/config';
 import { DAY } from './src/constants.js';
+import type { Newspaper, EmailRecipient } from './src/types.js';
 
 // --- 수집 대상 신문사 ---
-export const newspapers = [
+export const newspapers: Newspaper[] = [
   {
     name: '신문사A',
     type: 'image',  // 이미지 URL → Google Cloud Vision OCR로 텍스트 추출
@@ -89,7 +88,7 @@ export const newspapers = [
 ];
 
 // --- 이메일 수신자 ---
-export const emailRecipients = [
+export const emailRecipients: EmailRecipient[] = [
   { name: '홍길동', address: 'example@gmail.com' },
   { name: '김철수', address: 'example22@gmail.com' },
 ];
@@ -98,29 +97,20 @@ export const emailRecipients = [
 - URL의 `{year}`, `{month}`, `{day}`는 실행 시점의 날짜로 자동 치환됩니다.
 - `type: image`: 이미지 URL에서 Google Cloud Vision OCR로 텍스트를 추출합니다.
 - `type: text`: URL에서 HTML 본문 텍스트를 직접 가져옵니다. 기사 목록 페이지처럼 중간 페이지를 거쳐야 하는 경우 `selector`를 지정하면, 해당 요소의 href URL로 이동한 뒤 본문을 추출합니다.
-- `skipDays`: 휴간일 목록입니다. `DAY.SUN`, `DAY.SAT` 등 `constants.js`의 `DAY` 상수를 사용합니다. 생략하면 매일 수집합니다.
+- `skipDays`: 휴간일 목록입니다. `DAY.SUN`, `DAY.SAT` 등 `src/constants.ts`의 `DAY` 상수를 사용합니다. 생략하면 매일 수집합니다.
 
 ## 실행
 
 ```bash
-# 터미널에 출력
-MODE=terminal npm start
-
-# WordPress에 포스팅
-MODE=wordpress npm start
-
-# 이메일 발송
-MODE=email npm start
-
-# Slack 메시지 발송
-MODE=slack npm start
+pnpm start
 ```
 
 ## 프로젝트 구조
 
 ```
-├── index.js                  # 진입점
-├── config.js                 # 신문사·수신자 설정
+├── main.ts                   # 진입점
+├── config.ts                 # 신문사·수신자 설정
+├── tsconfig.json             # TypeScript 설정
 ├── .env                      # 환경 변수
 ├── prompts/                  # GPT 프롬프트 파일
 │   ├── remove-unnecessary.md
@@ -128,14 +118,15 @@ MODE=slack npm start
 │   ├── summary.md
 │   └── add-terms-glossary.md
 └── src/
-    ├── news.js               # 기사 수집 및 처리 파이프라인
-    ├── scraper.js            # 텍스트/이미지 크롤러
-    ├── llm.js                # OpenAI API 호출
-    ├── prompts.js            # 프롬프트 로더
-    ├── constants.js
-    ├── utils.js
+    ├── types.ts              # 공유 타입 정의
+    ├── news.ts               # 기사 수집 및 처리 파이프라인
+    ├── scraper.ts            # 텍스트/이미지 크롤러
+    ├── llm.ts                # OpenAI API 호출
+    ├── prompts.ts            # 프롬프트 로더
+    ├── constants.ts
+    ├── utils.ts
     └── publishers/
-        ├── email.js          # Gmail 발송
-        ├── slack.js          # Slack 발송
-        └── wordpress.js      # WordPress 포스팅
+        ├── email.ts          # Gmail 발송
+        ├── slack.ts          # Slack 발송
+        └── wordpress.ts      # WordPress 포스팅
 ```
