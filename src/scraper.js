@@ -30,7 +30,12 @@ export async function getBase64Image(imageUrl) {
     }
 
     const arrayBuffer = await response.arrayBuffer();
-    return Buffer.from(arrayBuffer).toString('base64');
+    const base64Image = Buffer.from(arrayBuffer).toString('base64');
+    if (!base64Image) {
+      throw new Error(`이미지 인코딩 실패: ${imageUrl}`);
+    }
+
+    return base64Image;
   } catch (error) {
     if ((error?.cause?.code ?? error?.code) !== 'ERR_SSL_DH_KEY_TOO_SMALL') {
       throw error;
