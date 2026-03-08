@@ -7,10 +7,8 @@ import { createTitle, createContent } from './src/news.js';
 async function main() {
   const title = createTitle();
   const content = await createContent(newspapers);
-
-  if (!title || !content) {
-    console.error('제목 또는 내용이 비어 있습니다.');
-    process.exit(1);
+  if (content == null) {
+    return;
   }
 
   const mode = process.env.MODE;

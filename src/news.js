@@ -29,6 +29,11 @@ export async function createContent(newspapers) {
     content += article;
   }
 
+  if (!content) {
+    console.log('오늘 발행된 기사가 없습니다.');
+    return null;
+  }
+
   const offset = newspapers.length;
 
   content = await generateLlmCompletion(PROMPTS.removeUnnecessary, content);
