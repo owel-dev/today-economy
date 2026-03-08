@@ -4,7 +4,7 @@ import { sendMailList } from './src/publishers/email.js';
 import { sendSlackMessage } from './src/publishers/slack.js';
 import { createTitle, createContent } from './src/news.js';
 
-async function main() {
+async function main(): Promise<void> {
   const title = createTitle();
   const content = await createContent(newspapers);
   if (content == null) {
@@ -20,7 +20,7 @@ async function main() {
   } else if (mode === 'email') {
     await sendMailList(emailRecipients, title, content);
   } else if (mode === 'slack') {
-    await sendSlackMessage(process.env.SLACK_CHANNEL, `${title}\n\n${content}`);
+    await sendSlackMessage(process.env.SLACK_CHANNEL ?? '', `${title}\n\n${content}`);
   } else {
     console.error(`지원하지 않는 MODE입니다: "${mode}". terminal, wordpress, email, slack 중 하나를 설정해주세요.`);
     process.exit(1);

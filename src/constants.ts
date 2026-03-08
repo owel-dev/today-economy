@@ -6,10 +6,10 @@ export const DAY = {
   THU: 4,
   FRI: 5,
   SAT: 6,
-};
+} as const;
 
 export const NEWSPAPER = {
   HANKYUNG: 0,
   MAEIL: 1,
   BLOOMBERG: 2,
-};
+} as const;

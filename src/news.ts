@@ -1,19 +1,16 @@
-import fs from 'fs';
 import { getBase64Image, ocrImage, scrapeBodyText, scrapeSelectorUrl } from './scraper.js';
 import { generateLlmCompletion } from './llm.js';
 import { PROMPTS } from './prompts.js';
-import { getKoreanDate } from './utils.js';
-import { DAY } from './constants.js';
-import { saveLog } from './utils.js';
+import { getKoreanDate, saveLog } from './utils.js';
+import type { Newspaper, DayOfWeek } from './types.js';
 
-export function createTitle() {
+export function createTitle(): string {
   const { year, month, day } = getKoreanDate({ padZero: false });
-
   return `${year}년 ${month}월 ${day}일 오늘의 경제뉴스`;
 }
 
-export async function createContent(newspapers) {
-  let content = "";
+export async function createContent(newspapers: Newspaper[]): Promise<string | null> {
+  let content = '';
 
   const totalSteps = newspapers.length + 4;
 
@@ -22,8 +19,9 @@ export async function createContent(newspapers) {
       console.log(`[${i + 1}/${totalSteps}] ${newspapers[i].name} 기사 건너뜀`);
       continue;
     }
-    
+
     const article = await getRowArticle(newspapers[i]);
+    if (article == null) continue;
     saveLog(`0_${newspapers[i].name}`, article);
     console.log(`[${i + 1}/${totalSteps}] ${newspapers[i].name} 기사 수집 완료`);
     content += article;
@@ -36,32 +34,32 @@ export async function createContent(newspapers) {
 
   const offset = newspapers.length;
 
-  content = await generateLlmCompletion(PROMPTS.removeUnnecessary, content);
+  content = (await generateLlmCompletion(PROMPTS.removeUnnecessary, content)) ?? content;
   saveLog('1_removeUnnecessary', content);
   console.log(`[${offset + 1}/${totalSteps}] 불필요한 내용 제거 완료`);
 
-  content = await generateLlmCompletion(PROMPTS.mergeDuplicate, content);
+  content = (await generateLlmCompletion(PROMPTS.mergeDuplicate, content)) ?? content;
   saveLog('2_mergeDuplicate', content);
   console.log(`[${offset + 2}/${totalSteps}] 중복 기사 병합 완료`);
 
-  content = await generateLlmCompletion(PROMPTS.summary, content);
+  content = (await generateLlmCompletion(PROMPTS.summary, content)) ?? content;
   saveLog('3_summary', content);
   console.log(`[${offset + 3}/${totalSteps}] 기사 요약 완료`);
 
-  content = await generateLlmCompletion(PROMPTS.addTermsGlossary, content);
+  content = (await generateLlmCompletion(PROMPTS.addTermsGlossary, content)) ?? content;
   saveLog('4_addTermsGlossary', content);
   console.log(`[${offset + 4}/${totalSteps}] 용어 해설 추가 완료`);
 
   return content;
 }
 
-export function isWorkingDay(newspaper) {
+export function isWorkingDay(newspaper: Newspaper): boolean {
   if (!newspaper.skipDays) return true;
-  const dayOfWeek = new Date().getDay();
+  const dayOfWeek = new Date().getDay() as DayOfWeek;
   return !newspaper.skipDays.includes(dayOfWeek);
 }
 
-export async function getRowArticle({ type, url, selector }) {
+export async function getRowArticle({ type, url, selector }: Newspaper): Promise<string | null> {
   const { year, month, day } = getKoreanDate();
   const resolvedUrl = url
     .replace('{year}', year)

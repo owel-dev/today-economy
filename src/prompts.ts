@@ -3,8 +3,8 @@ import path from 'path';
 
 const promptDir = path.join(import.meta.dirname, '..', 'prompts');
 
-const loadPrompt = (name) => {
-  return fs.readFileSync(path.join(promptDir, `${name}`), 'utf-8');
+const loadPrompt = (name: string): string => {
+  return fs.readFileSync(path.join(promptDir, name), 'utf-8');
 };
 
 export const PROMPTS = {

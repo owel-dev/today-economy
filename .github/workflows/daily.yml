@@ -24,7 +24,7 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Fetch config.js from Gist
+      - name: Fetch config.ts from Gist
         env:
           GIST_TOKEN: ${{ secrets.GIST_TOKEN }}
           GIST_ID: ${{ secrets.GIST_ID }}
@@ -32,13 +32,13 @@ jobs:
           curl -fsSL \
             -H "Authorization: token $GIST_TOKEN" \
             "https://api.github.com/gists/$GIST_ID" \
-            | jq -r '.files["config.js"].content' > config.js
+            | jq -r '.files["config.ts"].content' > config.ts
 
-      - name: Run index.js
+      - name: Run main.ts
         env:
           MODE: email
           GCP_API_KEY: ${{ secrets.GCP_API_KEY }}
           GPT_API_KEY: ${{ secrets.GPT_API_KEY }}
           GMAIL_USER: ${{ secrets.GMAIL_USER }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
-        run: node index.js
+        run: npx tsx main.ts

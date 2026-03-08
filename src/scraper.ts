@@ -1,12 +1,12 @@
 import * as cheerio from 'cheerio';
 import https from 'node:https';
 
-export async function fetchText(url) {
+export async function fetchText(url: string): Promise<string> {
   const response = await fetch(url);
   return response.text();
 }
 
-export async function scrapeSelectorUrl(url, selector) {
+export async function scrapeSelectorUrl(url: string, selector: string): Promise<string> {
   const html = await fetchText(url);
   const $ = cheerio.load(html);
   const href = $(selector).attr('href');
@@ -14,14 +14,14 @@ export async function scrapeSelectorUrl(url, selector) {
   return href;
 }
 
-export async function scrapeBodyText(url) {
+export async function scrapeBodyText(url: string): Promise<string | null> {
   const html = await fetchText(url);
   const $ = cheerio.load(html);
   $('script, style, nav, header, footer').remove();
   return $('body').html();
 }
 
-export async function getBase64Image(imageUrl) {
+export async function getBase64Image(imageUrl: string): Promise<string> {
   try {
     const response = await fetch(imageUrl);
 
@@ -37,11 +37,12 @@ export async function getBase64Image(imageUrl) {
 
     return base64Image;
   } catch (error) {
-    if ((error?.cause?.code ?? error?.code) !== 'ERR_SSL_DH_KEY_TOO_SMALL') {
+    const err = error as NodeJS.ErrnoException & { cause?: NodeJS.ErrnoException };
+    if ((err?.cause?.code ?? err?.code) !== 'ERR_SSL_DH_KEY_TOO_SMALL') {
       throw error;
     }
 
-    const imageBuffer = await new Promise((resolve, reject) => {
+    const imageBuffer = await new Promise<Buffer>((resolve, reject) => {
       https
         .get(imageUrl, { ciphers: 'DEFAULT@SECLEVEL=1' }, (res) => {
           if (!res.statusCode || res.statusCode < 200 || res.statusCode >= 300) {
@@ -50,8 +51,8 @@ export async function getBase64Image(imageUrl) {
             return;
           }
 
-          const chunks = [];
-          res.on('data', (chunk) => chunks.push(chunk));
+          const chunks: Buffer[] = [];
+          res.on('data', (chunk: Buffer) => chunks.push(chunk));
           res.on('end', () => resolve(Buffer.concat(chunks)));
           res.on('error', reject);
         })
@@ -62,31 +63,30 @@ export async function getBase64Image(imageUrl) {
   }
 }
 
-export async function ocrImage(base64Image) {
+interface VisionResponse {
+  responses?: Array<{ fullTextAnnotation?: { text: string } }>;
+  error?: unknown;
+}
+
+export async function ocrImage(base64Image: string): Promise<string | null> {
   const apiKey = process.env.GCP_API_KEY;
   const visionApiUrl = 'https://vision.googleapis.com/v1/images:annotate?key=' + apiKey;
 
   const requestBody = {
     requests: [
       {
-        image: {
-          content: base64Image
-        },
-        features: [
-          {
-            type: 'TEXT_DETECTION'
-          }
-        ]
-      }
-    ]
+        image: { content: base64Image },
+        features: [{ type: 'TEXT_DETECTION' }],
+      },
+    ],
   };
 
   const response = await fetch(visionApiUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(requestBody)
+    body: JSON.stringify(requestBody),
   });
-  const responseData = await response.json();
+  const responseData: VisionResponse = await response.json();
 
   if (!response.ok || !responseData.responses) {
     throw new Error(`Google Vision API 오류: ${JSON.stringify(responseData.error || responseData)}`);
