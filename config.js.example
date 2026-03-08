@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import { DAY } from './src/constants.js';
 
 // --- 수집 대상 신문사 ---
 export const newspapers = [
@@ -6,16 +7,19 @@ export const newspapers = [
     name: '신문사A',
     type: 'image',                                           // OCR로 텍스트 추출
     url: 'https://example.com/news/{year}{month}{day}/page.jpg',
+    skipDays: [DAY.SUN],                                     // 일요일 휴간 (생략 시 매일 수집)
   },
   {
     name: '신문사B',
     type: 'text',                                            // HTML 본문 텍스트 추출
     url: 'https://example.com/news/{year}/{month}/{day}/article',
+    skipDays: [DAY.SAT, DAY.SUN],                            // 토·일요일 휴간
   },
   {
     name: '신문사C',
-    type: 'rss',                                             // RSS 피드 최신 기사 추출
-    url: 'https://example.com/feed',
+    type: 'text',                                            // selector로 기사 URL 추출 후 본문 텍스트 추출
+    url: 'https://example.com/news/{year}/{month}/{day}',
+    selector: '#today-news .news-list li:first-child a',
   },
 ];
 

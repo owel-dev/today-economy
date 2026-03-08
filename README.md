@@ -63,23 +63,28 @@ cp config.js.example config.js
 ```
 
 ```js
+import { DAY } from './src/constants.js';
+
 // --- 수집 대상 신문사 ---
 export const newspapers = [
   {
     name: '신문사A',
     type: 'image',  // 이미지 URL → Google Cloud Vision OCR로 텍스트 추출
     url: 'https://example.com/news/{year}{month}{day}/page.jpg',
+    skipDays: [DAY.SUN],             // 일요일 휴간
   },
   {
     name: '신문사B',
     type: 'text',   // HTML 페이지 → 본문 텍스트 직접 추출
     url: 'https://example.com/news/{year}/{month}/{day}/article',
+    skipDays: [DAY.SAT, DAY.SUN],   // 토·일요일 휴간
   },
   {
     name: '신문사C',
     type: 'text',   // selector로 기사 URL을 추출한 뒤 본문 텍스트 추출
     url: 'https://example.com/news/{year}/{month}/{day}',
-    selector: '#today-news .news-list li:first-child a.href',
+    selector: '#today-news .news-list li:first-child a',
+                                     // skipDays 생략 시 매일 수집
   },
 ];
 
@@ -93,6 +98,7 @@ export const emailRecipients = [
 - URL의 `{year}`, `{month}`, `{day}`는 실행 시점의 날짜로 자동 치환됩니다.
 - `type: image`: 이미지 URL에서 Google Cloud Vision OCR로 텍스트를 추출합니다.
 - `type: text`: URL에서 HTML 본문 텍스트를 직접 가져옵니다. 기사 목록 페이지처럼 중간 페이지를 거쳐야 하는 경우 `selector`를 지정하면, 해당 요소의 href URL로 이동한 뒤 본문을 추출합니다.
+- `skipDays`: 휴간일 목록입니다. `DAY.SUN`, `DAY.SAT` 등 `constants.js`의 `DAY` 상수를 사용합니다. 생략하면 매일 수집합니다.
 
 ## 실행
 

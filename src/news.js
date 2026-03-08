@@ -15,18 +15,17 @@ export function createTitle() {
 export async function createContent(newspapers) {
   let content = "";
 
-  if (new Date().getDay() === DAY.SUN) return;
-  const total = newspapers.length + 4;
+  const totalSteps = newspapers.length + 4;
 
   for (let i = 0; i < newspapers.length; i++) {
     if (!isWorkingDay(newspapers[i])) {
-      console.log(`[${i + 1}/${total}] ${newspapers[i].name} 기사 건너뜀`);
+      console.log(`[${i + 1}/${totalSteps}] ${newspapers[i].name} 기사 건너뜀`);
       continue;
     }
     
     const article = await getRowArticle(newspapers[i]);
     saveLog(`0_${newspapers[i].name}`, article);
-    console.log(`[${i + 1}/${total}] ${newspapers[i].name} 기사 수집 완료`);
+    console.log(`[${i + 1}/${totalSteps}] ${newspapers[i].name} 기사 수집 완료`);
     content += article;
   }
 
@@ -34,36 +33,27 @@ export async function createContent(newspapers) {
 
   content = await generateLlmCompletion(PROMPTS.removeUnnecessary, content);
   saveLog('1_removeUnnecessary', content);
-  console.log(`[${offset + 1}/${total}] 불필요한 내용 제거 완료`);
+  console.log(`[${offset + 1}/${totalSteps}] 불필요한 내용 제거 완료`);
 
   content = await generateLlmCompletion(PROMPTS.mergeDuplicate, content);
   saveLog('2_mergeDuplicate', content);
-  console.log(`[${offset + 2}/${total}] 중복 기사 병합 완료`);
+  console.log(`[${offset + 2}/${totalSteps}] 중복 기사 병합 완료`);
 
   content = await generateLlmCompletion(PROMPTS.summary, content);
   saveLog('3_summary', content);
-  console.log(`[${offset + 3}/${total}] 기사 요약 완료`);
+  console.log(`[${offset + 3}/${totalSteps}] 기사 요약 완료`);
 
   content = await generateLlmCompletion(PROMPTS.addTermsGlossary, content);
   saveLog('4_addTermsGlossary', content);
-  console.log(`[${offset + 4}/${total}] 용어 해설 추가 완료`);
+  console.log(`[${offset + 4}/${totalSteps}] 용어 해설 추가 완료`);
 
   return content;
 }
 
 export function isWorkingDay(newspaper) {
-  const today = new Date();
-  const dayOfWeek = today.getDay();
-
-  if (newspaper.name === 'H' || newspaper.name === 'M') {
-    return dayOfWeek !== DAY.SUN;
-  }
-
-  if (newspaper.name === 'B') {
-    return dayOfWeek !== DAY.SUN && dayOfWeek !== DAY.SAT;
-  }
-
-  return true;
+  if (!newspaper.skipDays) return true;
+  const dayOfWeek = new Date().getDay();
+  return !newspaper.skipDays.includes(dayOfWeek);
 }
 
 export async function getRowArticle({ type, url, selector }) {
