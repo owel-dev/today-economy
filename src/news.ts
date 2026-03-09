@@ -1,8 +1,8 @@
-import { getBase64Image, ocrImage, scrapeBodyText, scrapeSelectorUrl } from './scraper.js';
-import { generateLlmCompletion } from './llm.js';
-import { PROMPTS } from './prompts.js';
-import { getKoreanDate, saveLog } from './utils.js';
-import type { Newspaper, DayOfWeek } from './types.js';
+import { getBase64Image, ocrImage, scrapeBodyText, scrapeSelectorUrl } from './scraper.ts';
+import { generateLlmCompletion } from './llm.ts';
+import { PROMPTS } from './prompts.ts';
+import { getKoreanDate, saveLog } from './utils.ts';
+import type { Newspaper, DayOfWeek } from './types.ts';
 
 export function createTitle(): string {
   const { year, month, day } = getKoreanDate({ padZero: false });

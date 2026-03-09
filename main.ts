@@ -1,8 +1,8 @@
-import { newspapers, emailRecipients } from './config.js';
-import { createWpPost } from './src/publishers/wordpress.js';
-import { sendMailList } from './src/publishers/email.js';
-import { sendSlackMessage } from './src/publishers/slack.js';
-import { createTitle, createContent } from './src/news.js';
+import { newspapers, emailRecipients } from './config.ts';
+import { createWpPost } from './src/publishers/wordpress.ts';
+import { sendMailList } from './src/publishers/email.ts';
+import { sendSlackMessage } from './src/publishers/slack.ts';
+import { createTitle, createContent } from './src/news.ts';
 
 async function main(): Promise<void> {
   const title = createTitle();

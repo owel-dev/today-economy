@@ -57,12 +57,12 @@ cp .env.example .env
 
 ### 2. 신문사 및 수신자 설정
 
-`config.js.example`을 참고하여 `config.ts` 파일을 만듭니다.
+`config.ts.example`을 참고하여 `config.ts` 파일을 만듭니다.
 
 ```ts
 import 'dotenv/config';
-import { DAY } from './src/constants.js';
-import type { Newspaper, EmailRecipient } from './src/types.js';
+import { DAY } from './src/constants.ts';
+import type { Newspaper, EmailRecipient } from './src/types.ts';
 
 // --- 수집 대상 신문사 ---
 export const newspapers: Newspaper[] = [

@@ -1,8 +1,9 @@
 import 'dotenv/config';
-import { DAY } from './src/constants.js';
+import { DAY } from './src/constants.ts';
+import type { Newspaper, EmailRecipient } from './src/types.ts';
 
 // --- 수집 대상 신문사 ---
-export const newspapers = [
+export const newspapers: Newspaper[] = [
   {
     name: '신문사A',
     type: 'image',                                           // OCR로 텍스트 추출
@@ -24,7 +25,7 @@ export const newspapers = [
 ];
 
 // --- 이메일 수신자 ---
-export const emailRecipients = [
+export const emailRecipients: EmailRecipient[] = [
   { name: '홍길동', address: 'example1@gmail.com' },
   { name: '김철수', address: 'example2@gmail.com' },
 ];

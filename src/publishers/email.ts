@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import type { EmailRecipient } from '../types.js';
+import type { EmailRecipient } from '../types.ts';
 
 export async function sendEmail({ name, address }: EmailRecipient, subject: string, content: string): Promise<void> {
   const transporter = nodemailer.createTransport({
