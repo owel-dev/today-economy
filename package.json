@@ -2,6 +2,7 @@
   "name": "today-economy",
   "version": "1.0.0",
   "type": "module",
+  "packageManager": "pnpm@10.26.2",
   "scripts": {
     "start": "tsx main.ts",
     "typecheck": "tsc --noEmit",
