@@ -16,12 +16,16 @@ export async function generateLlmCompletion(
   options: LlmOptions = {}
 ): Promise<string | null> {
   const apiKey = process.env.GPT_API_KEY;
-
   if (!apiKey) {
     throw new Error('GPT_API_KEY가 설정되지 않았습니다');
   }
 
-  const { model = 'gpt-5-mini', temperature, maxTokens, reasoningEffort } = options;
+  const llm_model = process.env.LLM_MODEL;
+  if  (!llm_model) {
+    throw new Error('LLM_MODEL이 설정되지 않았습니다');
+  }
+
+  const { model = llm_model, temperature, maxTokens, reasoningEffort } = options;
 
   const messages = [
     { role: 'system', content: systemPrompt },
